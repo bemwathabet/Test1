@@ -10,6 +10,8 @@ try {
         get_in TEXT NOT NULL,
         get_out TEXT NOT NULL,
         destination TEXT NOT NULL,
+        container TEXT NOT NULL,
+        vendor TEXT NOT NULL,
         price REAL NOT NULL
     )";
     $db->exec($query);
