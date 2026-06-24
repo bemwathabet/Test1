@@ -25,6 +25,18 @@
                     <span class="label">Destinations</span>
                 </a>
             </li>
+            <li class="<?php echo basename($_SERVER['PHP_SELF']) == 'containers.php' ? 'active' : ''; ?>">
+                <a href="containers.php">
+                    <span class="icon">📦</span>
+                    <span class="label">Containers</span>
+                </a>
+            </li>
+            <li class="<?php echo basename($_SERVER['PHP_SELF']) == 'vendors.php' ? 'active' : ''; ?>">
+                <a href="vendors.php">
+                    <span class="icon">🏢</span>
+                    <span class="label">Vendors</span>
+                </a>
+            </li>
         </ul>
     </nav>
     <div class="sidebar-footer">

@@ -1,9 +1,11 @@
 <?php
 $db = require 'database.php';
 
-// Fetch terminals and destinations for the dropdowns
+// Fetch lookups for the dropdowns
 $terminals = $db->query("SELECT * FROM terminals ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 $destinations = $db->query("SELECT * FROM destinations ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+$containers = $db->query("SELECT * FROM containers ORDER BY reference ASC")->fetchAll(PDO::FETCH_ASSOC);
+$vendors = $db->query("SELECT * FROM vendors ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,12 +62,22 @@ $destinations = $db->query("SELECT * FROM destinations ORDER BY name ASC")->fetc
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="container">Container Reference</label>
-                            <input type="text" id="container" name="container" placeholder="e.g. MSKU1234567" required>
+                            <label for="container_id">Container Reference</label>
+                            <select id="container_id" name="container_id" required>
+                                <option value="">Select container...</option>
+                                <?php foreach ($containers as $c): ?>
+                                    <option value="<?php echo $c['id']; ?>"><?php echo htmlspecialchars($c['reference']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="form-group">
-                            <label for="vendor">Vendor Name</label>
-                            <input type="text" id="vendor" name="vendor" placeholder="e.g. Maersk" required>
+                            <label for="vendor_id">Vendor Name</label>
+                            <select id="vendor_id" name="vendor_id" required>
+                                <option value="">Select vendor...</option>
+                                <?php foreach ($vendors as $v): ?>
+                                    <option value="<?php echo $v['id']; ?>"><?php echo htmlspecialchars($v['name']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="price">Agreed Price (USD)</label>

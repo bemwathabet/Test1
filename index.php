@@ -1,15 +1,19 @@
 <?php
 $db = require 'database.php';
 
-// Fetch all items with joined names for locations and destinations
+// Fetch all items with joined names for all relational fields
 $query = "SELECT i.*,
                  t_in.name as get_in_name,
                  t_out.name as get_out_name,
-                 d.name as destination_name
+                 d.name as destination_name,
+                 c.reference as container_ref,
+                 v.name as vendor_name
           FROM items i
           JOIN terminals t_in ON i.get_in_id = t_in.id
           JOIN terminals t_out ON i.get_out_id = t_out.id
           JOIN destinations d ON i.destination_id = d.id
+          JOIN containers c ON i.container_id = c.id
+          JOIN vendors v ON i.vendor_id = v.id
           ORDER BY i.id DESC";
 $stmt = $db->query($query);
 $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -71,8 +75,8 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <td><?php echo htmlspecialchars($item['get_in_name']); ?></td>
                                         <td><?php echo htmlspecialchars($item['get_out_name']); ?></td>
                                         <td><?php echo htmlspecialchars($item['destination_name']); ?></td>
-                                        <td><span class="badge"><?php echo htmlspecialchars($item['container']); ?></span></td>
-                                        <td><?php echo htmlspecialchars($item['vendor']); ?></td>
+                                        <td><span class="badge"><?php echo htmlspecialchars($item['container_ref']); ?></span></td>
+                                        <td><?php echo htmlspecialchars($item['vendor_name']); ?></td>
                                         <td><strong>$<?php echo htmlspecialchars(number_format($item['price'], 2)); ?></strong></td>
                                     </tr>
                                 <?php endforeach; ?>

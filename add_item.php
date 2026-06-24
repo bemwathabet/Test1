@@ -5,19 +5,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $get_in_id = $_POST['get_in_id'] ?? 0;
     $get_out_id = $_POST['get_out_id'] ?? 0;
     $destination_id = $_POST['destination_id'] ?? 0;
-    $container = $_POST['container'] ?? '';
-    $vendor = $_POST['vendor'] ?? '';
+    $container_id = $_POST['container_id'] ?? 0;
+    $vendor_id = $_POST['vendor_id'] ?? 0;
     $price = $_POST['price'] ?? 0;
 
-    if ($get_in_id > 0 && $get_out_id > 0 && $destination_id > 0 && !empty($container) && !empty($vendor) && $price > 0) {
+    if ($get_in_id > 0 && $get_out_id > 0 && $destination_id > 0 && $container_id > 0 && $vendor_id > 0 && $price > 0) {
         try {
-            $stmt = $db->prepare("INSERT INTO items (get_in_id, get_out_id, destination_id, container, vendor, price) VALUES (:get_in_id, :get_out_id, :destination_id, :container, :vendor, :price)");
+            $stmt = $db->prepare("INSERT INTO items (get_in_id, get_out_id, destination_id, container_id, vendor_id, price) VALUES (:get_in_id, :get_out_id, :destination_id, :container_id, :vendor_id, :price)");
             $stmt->execute([
                 ':get_in_id' => $get_in_id,
                 ':get_out_id' => $get_out_id,
                 ':destination_id' => $destination_id,
-                ':container' => $container,
-                ':vendor' => $vendor,
+                ':container_id' => $container_id,
+                ':vendor_id' => $vendor_id,
                 ':price' => $price
             ]);
             header("Location: index.php?success=1");
