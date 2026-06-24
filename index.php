@@ -38,14 +38,23 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <header class="page-header">
                 <div class="page-title">
                     <h1>Item Master</h1>
+                    <p>Overview of all active shipment routes and pricing</p>
                 </div>
                 <div class="page-actions">
+                    <a href="export.php?type=items" class="btn">Export CSV</a>
+                    <a href="import.php?type=items" class="btn">Import CSV</a>
                     <a href="add.php" class="btn btn-primary">Add New Item</a>
                 </div>
             </header>
 
             <?php if (isset($_GET['success'])): ?>
                 <div class="alert alert-success">Shipment record added successfully!</div>
+            <?php endif; ?>
+            <?php if (isset($_GET['updated'])): ?>
+                <div class="alert alert-success">Shipment record updated successfully!</div>
+            <?php endif; ?>
+            <?php if (isset($_GET['deleted'])): ?>
+                <div class="alert alert-danger">Record deleted successfully.</div>
             <?php endif; ?>
 
             <div class="card">
@@ -61,12 +70,13 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <th>Container</th>
                                 <th>Vendor</th>
                                 <th>Price (USD)</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($items)): ?>
                                 <tr>
-                                    <td colspan="7">No shipment records found in the master list.</td>
+                                    <td colspan="8">No shipment records found in the master list.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($items as $item): ?>
@@ -78,6 +88,12 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <td><span class="badge"><?php echo htmlspecialchars($item['container_ref']); ?></span></td>
                                         <td><?php echo htmlspecialchars($item['vendor_name']); ?></td>
                                         <td><strong>$<?php echo htmlspecialchars(number_format($item['price'], 2)); ?></strong></td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <a href="edit_item.php?id=<?php echo $item['id']; ?>" class="action-link edit">Edit</a>
+                                                <a href="delete.php?type=items&id=<?php echo $item['id']; ?>" class="action-link delete" onclick="return confirm('Delete this shipment?')">Delete</a>
+                                            </div>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>

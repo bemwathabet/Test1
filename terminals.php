@@ -26,10 +26,17 @@ $terminals = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <div class="page-title">
                     <h1>Terminals Management</h1>
                 </div>
+                <div class="page-actions">
+                    <a href="export.php?type=terminals" class="btn">Export CSV</a>
+                    <a href="import.php?type=terminals" class="btn">Import CSV</a>
+                </div>
             </header>
 
             <?php if (isset($_GET['success'])): ?>
-                <div class="alert alert-success">Terminal location added successfully!</div>
+                <div class="alert alert-success">Terminal location added/updated successfully!</div>
+            <?php endif; ?>
+            <?php if (isset($_GET['deleted'])): ?>
+                <div class="alert alert-danger">Terminal location deleted.</div>
             <?php endif; ?>
 
             <div class="card add-new">
@@ -51,18 +58,25 @@ $terminals = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <tr>
                                 <th>ID</th>
                                 <th>Terminal Name</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($terminals)): ?>
                                 <tr>
-                                    <td colspan="2">No terminal locations registered in the system.</td>
+                                    <td colspan="3">No terminal locations registered in the system.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($terminals as $terminal): ?>
                                     <tr>
                                         <td>#<?php echo htmlspecialchars($terminal['id']); ?></td>
                                         <td><strong><?php echo htmlspecialchars($terminal['name']); ?></strong></td>
+                                        <td>
+                                            <div class="table-actions">
+                                                <a href="edit_lookup.php?type=terminals&id=<?php echo $terminal['id']; ?>" class="action-link edit">Edit</a>
+                                                <a href="delete.php?type=terminals&id=<?php echo $terminal['id']; ?>" class="action-link delete" onclick="return confirm('Delete this terminal?')">Delete</a>
+                                            </div>
+                                        </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
