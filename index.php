@@ -19,56 +19,69 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trucking Service - Item Master</title>
+    <title>LogiTrack Enterprise - Item Master</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Item Master (Trucking Services)</h1>
+    <div class="dashboard-wrapper">
+        <?php include 'header_component.php'; ?>
         <?php include 'nav.php'; ?>
 
-        <?php if (isset($_GET['success'])): ?>
-            <div class="alert success">Item added successfully!</div>
-        <?php endif; ?>
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Item Master</h1>
+                </div>
+                <div class="page-actions">
+                    <a href="add.php" class="btn btn-primary">Add New Item</a>
+                </div>
+            </header>
 
-        <nav class="actions">
-            <a href="add.php" class="btn primary">Add New Item</a>
-        </nav>
+            <?php if (isset($_GET['success'])): ?>
+                <div class="alert alert-success">Shipment record added successfully!</div>
+            <?php endif; ?>
 
-        <section class="item-list">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Get In</th>
-                        <th>Get Out</th>
-                        <th>Destination</th>
-                        <th>Container</th>
-                        <th>Vendor</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($items)): ?>
-                        <tr>
-                            <td colspan="7">No items found.</td>
-                        </tr>
-                    <?php else: ?>
-                        <?php foreach ($items as $item): ?>
+            <div class="card">
+                <h2 class="card-title">Trucking Service Items</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
                             <tr>
-                                <td><?php echo htmlspecialchars($item['id']); ?></td>
-                                <td><?php echo htmlspecialchars($item['get_in_name']); ?></td>
-                                <td><?php echo htmlspecialchars($item['get_out_name']); ?></td>
-                                <td><?php echo htmlspecialchars($item['destination_name']); ?></td>
-                                <td><?php echo htmlspecialchars($item['container']); ?></td>
-                                <td><?php echo htmlspecialchars($item['vendor']); ?></td>
-                                <td><?php echo htmlspecialchars(number_format($item['price'], 2)); ?></td>
+                                <th>ID</th>
+                                <th>Get In</th>
+                                <th>Get Out</th>
+                                <th>Destination</th>
+                                <th>Container</th>
+                                <th>Vendor</th>
+                                <th>Price (USD)</th>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </section>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($items)): ?>
+                                <tr>
+                                    <td colspan="7">No shipment records found in the master list.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($items as $item): ?>
+                                    <tr>
+                                        <td><strong>#<?php echo htmlspecialchars($item['id']); ?></strong></td>
+                                        <td><?php echo htmlspecialchars($item['get_in_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['get_out_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($item['destination_name']); ?></td>
+                                        <td><span class="badge"><?php echo htmlspecialchars($item['container']); ?></span></td>
+                                        <td><?php echo htmlspecialchars($item['vendor']); ?></td>
+                                        <td><strong>$<?php echo htmlspecialchars(number_format($item['price'], 2)); ?></strong></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
 </body>
 </html>

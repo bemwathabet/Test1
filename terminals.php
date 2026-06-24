@@ -10,54 +10,67 @@ $terminals = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Get in Get out (Terminals)</title>
+    <title>LogiTrack Enterprise - Terminals</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Get in Get out (Terminals)</h1>
+    <div class="dashboard-wrapper">
+        <?php include 'header_component.php'; ?>
         <?php include 'nav.php'; ?>
 
-        <?php if (isset($_GET['success'])): ?>
-            <div class="alert success">Terminal added successfully!</div>
-        <?php endif; ?>
-
-        <section class="add-new">
-            <h2>Add New Location</h2>
-            <form action="add_terminal.php" method="POST">
-                <div class="form-group">
-                    <label for="name">Location Name:</label>
-                    <input type="text" id="name" name="name" required>
+        <main class="main-content">
+            <header class="page-header">
+                <div class="page-title">
+                    <h1>Terminals Management</h1>
                 </div>
-                <button type="submit" class="btn primary">Add Location</button>
-            </form>
-        </section>
+            </header>
 
-        <section class="list">
-            <h2>Existing Locations</h2>
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php if (empty($terminals)): ?>
-                        <tr>
-                            <td colspan="2">No locations found.</td>
-                        </tr>
-                    <?php else: ?>
-                        <?php foreach ($terminals as $terminal): ?>
+            <?php if (isset($_GET['success'])): ?>
+                <div class="alert alert-success">Terminal location added successfully!</div>
+            <?php endif; ?>
+
+            <div class="card add-new">
+                <h2 class="card-title">Add New Terminal</h2>
+                <form action="add_terminal.php" method="POST">
+                    <div class="form-group">
+                        <label for="name">Location Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter terminal or port name..." required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Register Terminal</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title">Registered Terminal Locations</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
                             <tr>
-                                <td><?php echo htmlspecialchars($terminal['id']); ?></td>
-                                <td><?php echo htmlspecialchars($terminal['name']); ?></td>
+                                <th>ID</th>
+                                <th>Terminal Name</th>
                             </tr>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                </tbody>
-            </table>
-        </section>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($terminals)): ?>
+                                <tr>
+                                    <td colspan="2">No terminal locations registered in the system.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($terminals as $terminal): ?>
+                                    <tr>
+                                        <td>#<?php echo htmlspecialchars($terminal['id']); ?></td>
+                                        <td><strong><?php echo htmlspecialchars($terminal['name']); ?></strong></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
     </div>
 </body>
 </html>

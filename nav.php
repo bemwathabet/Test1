@@ -1,7 +1,33 @@
-<nav class="main-nav">
-    <ul>
-        <li><a href="index.php">Item Master</a></li>
-        <li><a href="terminals.php">Get in Get out</a></li>
-        <li><a href="destinations.php">Destination</a></li>
-    </ul>
-</nav>
+<aside class="sidebar">
+    <nav class="sidebar-nav">
+        <ul>
+            <li class="<?php echo basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : ''; ?>">
+                <a href="index.php">
+                    <span class="icon">📊</span>
+                    <span class="label">Item Master</span>
+                </a>
+            </li>
+            <li class="<?php echo basename($_SERVER['PHP_SELF']) == 'add.php' ? 'active' : ''; ?>">
+                <a href="add.php">
+                    <span class="icon">➕</span>
+                    <span class="label">New Shipment</span>
+                </a>
+            </li>
+            <li class="<?php echo basename($_SERVER['PHP_SELF']) == 'terminals.php' ? 'active' : ''; ?>">
+                <a href="terminals.php">
+                    <span class="icon">📍</span>
+                    <span class="label">Terminals</span>
+                </a>
+            </li>
+            <li class="<?php echo basename($_SERVER['PHP_SELF']) == 'destinations.php' ? 'active' : ''; ?>">
+                <a href="destinations.php">
+                    <span class="icon">🏁</span>
+                    <span class="label">Destinations</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <div class="sidebar-footer">
+        <p>© 2024 LogiTrack v2.0</p>
+    </div>
+</aside>
