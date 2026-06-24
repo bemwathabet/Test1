@@ -1,3 +1,10 @@
+<?php
+$db = require 'database.php';
+
+// Fetch terminals and destinations for the dropdowns
+$terminals = $db->query("SELECT * FROM terminals ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+$destinations = $db->query("SELECT * FROM destinations ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,24 +16,36 @@
 <body>
     <div class="container">
         <h1>Add New Trucking Service Item</h1>
-
-        <nav>
-            <a href="index.php" class="btn secondary">Back to Item Master</a>
-        </nav>
+        <?php include 'nav.php'; ?>
 
         <section class="add-item-full">
             <form action="add_item.php" method="POST">
                 <div class="form-group">
-                    <label for="get_in">Get In:</label>
-                    <input type="text" id="get_in" name="get_in" required>
+                    <label for="get_in_id">Get In:</label>
+                    <select id="get_in_id" name="get_in_id" required>
+                        <option value="">-- Select Location --</option>
+                        <?php foreach ($terminals as $t): ?>
+                            <option value="<?php echo $t['id']; ?>"><?php echo htmlspecialchars($t['name']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="get_out">Get Out:</label>
-                    <input type="text" id="get_out" name="get_out" required>
+                    <label for="get_out_id">Get Out:</label>
+                    <select id="get_out_id" name="get_out_id" required>
+                        <option value="">-- Select Location --</option>
+                        <?php foreach ($terminals as $t): ?>
+                            <option value="<?php echo $t['id']; ?>"><?php echo htmlspecialchars($t['name']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="form-group">
-                    <label for="destination">Destination:</label>
-                    <input type="text" id="destination" name="destination" required>
+                    <label for="destination_id">Destination:</label>
+                    <select id="destination_id" name="destination_id" required>
+                        <option value="">-- Select Destination --</option>
+                        <?php foreach ($destinations as $d): ?>
+                            <option value="<?php echo $d['id']; ?>"><?php echo htmlspecialchars($d['name']); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="container">Container:</label>

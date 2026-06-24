@@ -1,8 +1,17 @@
 <?php
 $db = require 'database.php';
 
-// Fetch all items
-$stmt = $db->query("SELECT * FROM items ORDER BY id DESC");
+// Fetch all items with joined names for locations and destinations
+$query = "SELECT i.*,
+                 t_in.name as get_in_name,
+                 t_out.name as get_out_name,
+                 d.name as destination_name
+          FROM items i
+          JOIN terminals t_in ON i.get_in_id = t_in.id
+          JOIN terminals t_out ON i.get_out_id = t_out.id
+          JOIN destinations d ON i.destination_id = d.id
+          ORDER BY i.id DESC";
+$stmt = $db->query($query);
 $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -16,12 +25,13 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="container">
         <h1>Item Master (Trucking Services)</h1>
+        <?php include 'nav.php'; ?>
 
         <?php if (isset($_GET['success'])): ?>
             <div class="alert success">Item added successfully!</div>
         <?php endif; ?>
 
-        <nav>
+        <nav class="actions">
             <a href="add.php" class="btn primary">Add New Item</a>
         </nav>
 
@@ -47,9 +57,9 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <?php foreach ($items as $item): ?>
                             <tr>
                                 <td><?php echo htmlspecialchars($item['id']); ?></td>
-                                <td><?php echo htmlspecialchars($item['get_in']); ?></td>
-                                <td><?php echo htmlspecialchars($item['get_out']); ?></td>
-                                <td><?php echo htmlspecialchars($item['destination']); ?></td>
+                                <td><?php echo htmlspecialchars($item['get_in_name']); ?></td>
+                                <td><?php echo htmlspecialchars($item['get_out_name']); ?></td>
+                                <td><?php echo htmlspecialchars($item['destination_name']); ?></td>
                                 <td><?php echo htmlspecialchars($item['container']); ?></td>
                                 <td><?php echo htmlspecialchars($item['vendor']); ?></td>
                                 <td><?php echo htmlspecialchars(number_format($item['price'], 2)); ?></td>

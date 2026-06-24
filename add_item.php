@@ -2,20 +2,20 @@
 $db = require 'database.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $get_in = $_POST['get_in'] ?? '';
-    $get_out = $_POST['get_out'] ?? '';
-    $destination = $_POST['destination'] ?? '';
+    $get_in_id = $_POST['get_in_id'] ?? 0;
+    $get_out_id = $_POST['get_out_id'] ?? 0;
+    $destination_id = $_POST['destination_id'] ?? 0;
     $container = $_POST['container'] ?? '';
     $vendor = $_POST['vendor'] ?? '';
     $price = $_POST['price'] ?? 0;
 
-    if (!empty($get_in) && !empty($get_out) && !empty($destination) && !empty($container) && !empty($vendor) && $price > 0) {
+    if ($get_in_id > 0 && $get_out_id > 0 && $destination_id > 0 && !empty($container) && !empty($vendor) && $price > 0) {
         try {
-            $stmt = $db->prepare("INSERT INTO items (get_in, get_out, destination, container, vendor, price) VALUES (:get_in, :get_out, :destination, :container, :vendor, :price)");
+            $stmt = $db->prepare("INSERT INTO items (get_in_id, get_out_id, destination_id, container, vendor, price) VALUES (:get_in_id, :get_out_id, :destination_id, :container, :vendor, :price)");
             $stmt->execute([
-                ':get_in' => $get_in,
-                ':get_out' => $get_out,
-                ':destination' => $destination,
+                ':get_in_id' => $get_in_id,
+                ':get_out_id' => $get_out_id,
+                ':destination_id' => $destination_id,
                 ':container' => $container,
                 ':vendor' => $vendor,
                 ':price' => $price
