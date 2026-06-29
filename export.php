@@ -29,7 +29,7 @@ switch ($type) {
         break;
     case 'items':
     default:
-        fputcsv($output, ['ID', 'Get In', 'Get Out', 'Destination', 'Container', 'Vendor', 'Price']);
+        fputcsv($output, ['ID', 'Get In', 'Get Out', 'Destination', 'Container', 'Vendor', 'Price', 'Currency']);
         $query = "SELECT
                     i.id,
                     tin.name as get_in,
@@ -37,7 +37,8 @@ switch ($type) {
                     d.name as destination,
                     c.reference as container,
                     v.name as vendor,
-                    i.price
+                    i.price,
+                    i.currency
                   FROM items i
                   JOIN terminals tin ON i.get_in_id = tin.id
                   JOIN terminals tout ON i.get_out_id = tout.id

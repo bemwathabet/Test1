@@ -61,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                             $cont_ref = $data[4] ?? '';
                             $vend_name = $data[5] ?? '';
                             $price = $data[6] ?? 0;
+                            $currency = $data[7] ?? 'EGP';
 
                             // Helper function to get or create ID
                             $get_id = function($table, $col, $val) use ($db) {
@@ -80,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                             $cont_id = $get_id('containers', 'reference', $cont_ref);
                             $vend_id = $get_id('vendors', 'name', $vend_name);
 
-                            $stmt = $db->prepare("INSERT INTO items (get_in_id, get_out_id, destination_id, container_id, vendor_id, price) VALUES (?, ?, ?, ?, ?, ?)");
-                            $stmt->execute([$get_in_id, $get_out_id, $dest_id, $cont_id, $vend_id, $price]);
+                            $stmt = $db->prepare("INSERT INTO items (get_in_id, get_out_id, destination_id, container_id, vendor_id, price, currency) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                            $stmt->execute([$get_in_id, $get_out_id, $dest_id, $cont_id, $vend_id, $price, $currency]);
                             break;
                     }
                 }
@@ -102,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>LogiTrack Enterprise - Import Data</title>
+    <title>EGLTRUCK - Import Data</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>

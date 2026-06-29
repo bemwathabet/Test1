@@ -25,7 +25,7 @@ $vendors = $db->query("SELECT * FROM vendors ORDER BY name ASC")->fetchAll(PDO::
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogiTrack Enterprise - Edit Shipment</title>
+    <title>EGLTRUCK - Edit Shipment</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -97,8 +97,14 @@ $vendors = $db->query("SELECT * FROM vendors ORDER BY name ASC")->fetchAll(PDO::
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="price">Agreed Price (USD)</label>
-                            <input type="number" id="price" name="price" step="0.01" value="<?php echo htmlspecialchars($item['price']); ?>" required>
+                            <label for="price">Agreed Price</label>
+                            <div style="display: flex; gap: 8px;">
+                                <select name="currency" style="width: 80px;" required>
+                                    <option value="EGP" <?php echo $item['currency'] == 'EGP' ? 'selected' : ''; ?>>EGP</option>
+                                    <option value="$" <?php echo $item['currency'] == '$' ? 'selected' : ''; ?>>$</option>
+                                </select>
+                                <input type="number" id="price" name="price" step="0.01" value="<?php echo htmlspecialchars($item['price']); ?>" required style="flex: 1;">
+                            </div>
                         </div>
                         <div class="form-group full-width">
                             <button type="submit" class="btn btn-primary">Update Shipment Record</button>

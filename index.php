@@ -23,7 +23,7 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogiTrack Enterprise - Item Master</title>
+    <title>EGLTRUCK - Item Master</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -69,7 +69,7 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <th>Destination</th>
                                 <th>Container</th>
                                 <th>Vendor</th>
-                                <th>Price (USD)</th>
+                                <th>Price</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -87,7 +87,7 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <td><?php echo htmlspecialchars($item['destination_name']); ?></td>
                                         <td><span class="badge"><?php echo htmlspecialchars($item['container_ref']); ?></span></td>
                                         <td><?php echo htmlspecialchars($item['vendor_name']); ?></td>
-                                        <td><strong>$<?php echo htmlspecialchars(number_format($item['price'], 2)); ?></strong></td>
+                                        <td><strong><?php echo htmlspecialchars($item['currency']); ?> <?php echo htmlspecialchars(number_format($item['price'], 2)); ?></strong></td>
                                         <td>
                                             <div class="table-actions">
                                                 <a href="edit_item.php?id=<?php echo $item['id']; ?>" class="action-link edit">Edit</a>

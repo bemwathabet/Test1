@@ -40,6 +40,6 @@
         </ul>
     </nav>
     <div class="sidebar-footer">
-        <p>© 2024 LogiTrack v2.0</p>
+        <p>© 2024 EGLTRUCK v2.0</p>
     </div>
 </aside>

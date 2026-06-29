@@ -40,6 +40,7 @@ try {
         container_id INTEGER NOT NULL,
         vendor_id INTEGER NOT NULL,
         price REAL NOT NULL,
+        currency TEXT NOT NULL DEFAULT 'EGP',
         FOREIGN KEY (get_in_id) REFERENCES terminals(id),
         FOREIGN KEY (get_out_id) REFERENCES terminals(id),
         FOREIGN KEY (destination_id) REFERENCES destinations(id),

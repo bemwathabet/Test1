@@ -1,7 +1,7 @@
 <header class="top-header">
     <div class="logo">
         <span class="logo-icon">🚚</span>
-        <span class="logo-text">LogiTrack Enterprise</span>
+        <span class="logo-text">EGLTRUCK</span>
     </div>
     <div class="header-actions">
         <div class="search-bar">

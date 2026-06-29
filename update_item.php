@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $container_id = $_POST['container_id'] ?? 0;
     $vendor_id = $_POST['vendor_id'] ?? 0;
     $price = $_POST['price'] ?? 0;
+    $currency = $_POST['currency'] ?? 'EGP';
 
     if ($id > 0 && $get_in_id > 0 && $get_out_id > 0 && $destination_id > 0 && $container_id > 0 && $vendor_id > 0 && $price > 0) {
         try {
@@ -18,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 destination_id = :destination_id,
                 container_id = :container_id,
                 vendor_id = :vendor_id,
-                price = :price
+                price = :price,
+                currency = :currency
                 WHERE id = :id");
             $stmt->execute([
                 ':get_in_id' => $get_in_id,
@@ -27,6 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ':container_id' => $container_id,
                 ':vendor_id' => $vendor_id,
                 ':price' => $price,
+                ':currency' => $currency,
                 ':id' => $id
             ]);
             header("Location: index.php?updated=1");

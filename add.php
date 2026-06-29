@@ -12,7 +12,7 @@ $vendors = $db->query("SELECT * FROM vendors ORDER BY name ASC")->fetchAll(PDO::
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogiTrack Enterprise - New Shipment</title>
+    <title>EGLTRUCK - New Shipment</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -80,8 +80,14 @@ $vendors = $db->query("SELECT * FROM vendors ORDER BY name ASC")->fetchAll(PDO::
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="price">Agreed Price (USD)</label>
-                            <input type="number" id="price" name="price" step="0.01" placeholder="0.00" required>
+                            <label for="price">Agreed Price</label>
+                            <div style="display: flex; gap: 8px;">
+                                <select name="currency" style="width: 80px;" required>
+                                    <option value="EGP" selected>EGP</option>
+                                    <option value="$">$</option>
+                                </select>
+                                <input type="number" id="price" name="price" step="0.01" placeholder="0.00" required style="flex: 1;">
+                            </div>
                         </div>
                         <div class="form-group full-width">
                             <button type="submit" class="btn btn-primary">Create Shipment Record</button>
