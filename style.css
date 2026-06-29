@@ -289,6 +289,83 @@ input:focus, select:focus {
     min-width: 28px;
 }
 
+/* Report Styles */
+.report-filter-card {
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+}
+
+.report-filter-form {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.report-filter-form label {
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.report-filter-form select {
+    width: 240px;
+}
+
+/* Report Pivot Table */
+.pivot-table-card {
+    padding: 0;
+    overflow: hidden;
+}
+
+.pivot-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.pivot-table th, .pivot-table td {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.pivot-table th {
+    background: #f8fafc;
+    color: #64748b;
+    font-size: 11px;
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-align: left;
+}
+
+.pivot-table td {
+    font-size: 14px;
+}
+
+.pivot-table tr:last-child td {
+    border-bottom: none;
+}
+
+.pivot-table .dest-col {
+    font-weight: 600;
+    color: #1e293b;
+    width: 300px;
+    background: #fcfcfc;
+}
+
+.pivot-table .price-cell {
+    text-align: right;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.pivot-table .empty-cell {
+    text-align: right;
+    color: #cbd5e1;
+    font-size: 12px;
+    font-style: italic;
+}
+
 /* Action Links */
 .table-actions {
     display: flex;

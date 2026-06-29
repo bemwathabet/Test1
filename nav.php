@@ -37,6 +37,12 @@
                     <span class="label">Vendors</span>
                 </a>
             </li>
+            <li class="<?php echo basename($_SERVER['PHP_SELF']) == 'report.php' ? 'active' : ''; ?>">
+                <a href="report.php">
+                    <span class="icon">📈</span>
+                    <span class="label">Pricing Report</span>
+                </a>
+            </li>
         </ul>
     </nav>
     <div class="sidebar-footer">
