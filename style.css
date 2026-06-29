@@ -248,42 +248,54 @@ input:focus, select:focus {
 /* Filter Section */
 .filter-section {
     background: #fff;
-    padding: 24px;
+    padding: 12px 20px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     box-shadow: var(--shadow);
 }
 
+.filter-section form {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
 .filter-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex: 1;
+    gap: 12px;
+}
+
+.filter-group {
+    flex: 1;
 }
 
 .filter-group label {
     display: block;
-    font-size: 11px;
+    font-size: 9px;
     font-weight: 700;
     color: #64748b;
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 .filter-group select[multiple] {
-    height: 120px;
-    padding: 8px;
-    background-image: none; /* Remove default arrow for multi-select */
+    height: 34px;
+    padding: 4px 8px;
+    font-size: 12px;
+    background-image: none;
 }
 
 .filter-actions {
     display: flex;
-    gap: 12px;
-    margin-top: 24px;
-    justify-content: flex-end;
-    padding-top: 16px;
-    border-top: 1px solid var(--border-color);
+    gap: 8px;
+}
+
+.filter-actions .btn {
+    padding: 6px 12px;
+    font-size: 12px;
 }
 
 /* Action Links */

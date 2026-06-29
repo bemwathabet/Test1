@@ -109,7 +109,7 @@ function is_selected($val, $arr) {
                     <div class="filter-grid">
                         <div class="filter-group">
                             <label>Get In</label>
-                            <select name="f_get_in[]" multiple>
+                            <select name="f_get_in[]" multiple title="Hold Ctrl to select multiple">
                                 <?php foreach ($terminals as $t): ?>
                                     <option value="<?php echo $t['id']; ?>" <?php echo is_selected($t['id'], $f_get_in); ?>>
                                         <?php echo htmlspecialchars($t['name']); ?>
@@ -119,7 +119,7 @@ function is_selected($val, $arr) {
                         </div>
                         <div class="filter-group">
                             <label>Get Out</label>
-                            <select name="f_get_out[]" multiple>
+                            <select name="f_get_out[]" multiple title="Hold Ctrl to select multiple">
                                 <?php foreach ($terminals as $t): ?>
                                     <option value="<?php echo $t['id']; ?>" <?php echo is_selected($t['id'], $f_get_out); ?>>
                                         <?php echo htmlspecialchars($t['name']); ?>
@@ -129,7 +129,7 @@ function is_selected($val, $arr) {
                         </div>
                         <div class="filter-group">
                             <label>Destination</label>
-                            <select name="f_dest[]" multiple>
+                            <select name="f_dest[]" multiple title="Hold Ctrl to select multiple">
                                 <?php foreach ($destinations as $d): ?>
                                     <option value="<?php echo $d['id']; ?>" <?php echo is_selected($d['id'], $f_dest); ?>>
                                         <?php echo htmlspecialchars($d['name']); ?>
@@ -139,7 +139,7 @@ function is_selected($val, $arr) {
                         </div>
                         <div class="filter-group">
                             <label>Container</label>
-                            <select name="f_container[]" multiple>
+                            <select name="f_container[]" multiple title="Hold Ctrl to select multiple">
                                 <?php foreach ($containers as $c): ?>
                                     <option value="<?php echo $c['id']; ?>" <?php echo is_selected($c['id'], $f_container); ?>>
                                         <?php echo htmlspecialchars($c['reference']); ?>
@@ -149,7 +149,7 @@ function is_selected($val, $arr) {
                         </div>
                         <div class="filter-group">
                             <label>Vendor</label>
-                            <select name="f_vendor[]" multiple>
+                            <select name="f_vendor[]" multiple title="Hold Ctrl to select multiple">
                                 <?php foreach ($vendors as $v): ?>
                                     <option value="<?php echo $v['id']; ?>" <?php echo is_selected($v['id'], $f_vendor); ?>>
                                         <?php echo htmlspecialchars($v['name']); ?>
@@ -159,8 +159,8 @@ function is_selected($val, $arr) {
                         </div>
                     </div>
                     <div class="filter-actions">
-                        <a href="index.php" class="btn">Clear All</a>
-                        <button type="submit" class="btn btn-primary">Apply Filters</button>
+                        <a href="index.php" class="btn">Reset</a>
+                        <button type="submit" class="btn btn-primary">Filter</button>
                     </div>
                 </form>
             </section>
