@@ -7,6 +7,10 @@ $terminals = $db->query("SELECT * FROM terminals ORDER BY name ASC")->fetchAll(P
 // Selected Gate In
 $selected_gate_in = $_GET['gate_in_id'] ?? ($terminals[0]['id'] ?? 0);
 
+// Fetch all vendors
+$vendors = $db->query("SELECT * FROM vendors ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+$selected_vendor = isset($_GET['vendor_id']) ? (int)$_GET['vendor_id'] : 0;
+
 // Fetch all unique containers (Columns)
 $containers = $db->query("SELECT * FROM containers ORDER BY reference ASC")->fetchAll(PDO::FETCH_ASSOC);
 
@@ -15,14 +19,48 @@ $destinations = $db->query("SELECT * FROM destinations ORDER BY name ASC")->fetc
 
 // Fetch pricing matrix for selected Gate In
 $matrix_data = [];
+$report_rows = []; // To keep track of unique combinations of (Destination, Vendor)
+
 if ($selected_gate_in > 0) {
-    $stmt = $db->prepare("SELECT destination_id, container_id, price, currency FROM items WHERE get_in_id = ?");
-    $stmt->execute([$selected_gate_in]);
+    $sql = "SELECT i.destination_id, i.container_id, i.price, i.currency, i.vendor_id, v.name as vendor_name, d.name as dest_name
+            FROM items i
+            JOIN vendors v ON i.vendor_id = v.id
+            JOIN destinations d ON i.destination_id = d.id
+            WHERE i.get_in_id = ?";
+
+    $params = [$selected_gate_in];
+
+    if ($selected_vendor > 0) {
+        $sql .= " AND i.vendor_id = ?";
+        $params[] = $selected_vendor;
+    }
+
+    $stmt = $db->prepare($sql);
+    $stmt->execute($params);
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($results as $row) {
-        $matrix_data[$row['destination_id']][$row['container_id']] = $row['currency'] . ' ' . number_format($row['price'], 2);
+        // Use a unique key for the row (Destination ID or Destination_Vendor combination)
+        $row_key = ($selected_vendor > 0) ? $row['destination_id'] : $row['destination_id'] . '_' . $row['vendor_id'];
+
+        if (!isset($report_rows[$row_key])) {
+            $report_rows[$row_key] = [
+                'dest_name' => $row['dest_name'],
+                'vendor_name' => $row['vendor_name']
+            ];
+        }
+
+        $matrix_data[$row_key][$row['container_id']] = $row['currency'] . ' ' . number_format($row['price'], 2);
     }
+
+    // Sort rows alphabetically by destination, then vendor
+    uasort($report_rows, function($a, $b) {
+        $cmp = strcmp($a['dest_name'], $b['dest_name']);
+        if ($cmp === 0) {
+            return strcmp($a['vendor_name'], $b['vendor_name']);
+        }
+        return $cmp;
+    });
 }
 ?>
 <!DOCTYPE html>
@@ -92,15 +130,30 @@ if ($selected_gate_in > 0) {
             </header>
 
             <section class="report-filter">
-                <form action="report.php" method="GET" style="display: flex; align-items: center; gap: 12px; width: 100%;">
-                    <label for="gate_in_id" style="margin: 0; font-weight: 600;">Select Gate In:</label>
-                    <select name="gate_in_id" id="gate_in_id" onchange="this.form.submit()">
-                        <?php foreach ($terminals as $t): ?>
-                            <option value="<?php echo $t['id']; ?>" <?php echo $t['id'] == $selected_gate_in ? 'selected' : ''; ?>>
-                                <?php echo htmlspecialchars($t['name']); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
+                <form action="report.php" method="GET" style="display: flex; align-items: center; gap: 24px; width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label for="gate_in_id" style="margin: 0; font-weight: 600;">Select Gate In:</label>
+                        <select name="gate_in_id" id="gate_in_id" onchange="this.form.submit()" style="width: 240px;">
+                            <?php foreach ($terminals as $t): ?>
+                                <option value="<?php echo $t['id']; ?>" <?php echo $t['id'] == $selected_gate_in ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($t['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label for="vendor_id" style="margin: 0; font-weight: 600;">Vendor:</label>
+                        <select name="vendor_id" id="vendor_id" onchange="this.form.submit()" style="width: 240px;">
+                            <option value="0" <?php echo $selected_vendor == 0 ? 'selected' : ''; ?>>All Vendors</option>
+                            <?php foreach ($vendors as $v): ?>
+                                <option value="<?php echo $v['id']; ?>" <?php echo $v['id'] == $selected_vendor ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($v['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
                     <noscript><button type="submit" class="btn">View</button></noscript>
                 </form>
             </section>
@@ -116,22 +169,37 @@ if ($selected_gate_in > 0) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php foreach ($destinations as $d): ?>
+                        <?php if (empty($report_rows)): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($d['name']); ?></td>
-                                <?php foreach ($containers as $c): ?>
+                                <td colspan="<?php echo count($containers) + 1; ?>" style="text-align: center; padding: 48px; color: #64748b;">
+                                    No pricing data found for the selected filters.
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <?php foreach ($report_rows as $row_key => $row_info): ?>
+                                <tr>
                                     <td>
                                         <?php
-                                        if (isset($matrix_data[$d['id']][$c['id']])) {
-                                            echo '<span class="price-found">' . $matrix_data[$d['id']][$c['id']] . '</span>';
-                                        } else {
-                                            echo '<span class="price-empty">N/A</span>';
+                                        echo htmlspecialchars($row_info['dest_name']);
+                                        if ($selected_vendor == 0) {
+                                            echo ' <small style="color: #64748b; font-weight: 400;">(' . htmlspecialchars($row_info['vendor_name']) . ')</small>';
                                         }
                                         ?>
                                     </td>
-                                <?php endforeach; ?>
-                            </tr>
-                        <?php endforeach; ?>
+                                    <?php foreach ($containers as $c): ?>
+                                        <td>
+                                            <?php
+                                            if (isset($matrix_data[$row_key][$c['id']])) {
+                                                echo '<span class="price-found">' . $matrix_data[$row_key][$c['id']] . '</span>';
+                                            } else {
+                                                echo '<span class="price-empty">N/A</span>';
+                                            }
+                                            ?>
+                                        </td>
+                                    <?php endforeach; ?>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
