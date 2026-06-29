@@ -1,51 +1,42 @@
 <?php
 $db = require 'database.php';
 
-// Fetch lookups for the filter dropdowns
+// Fetch lookups for the filter datalists
 $terminals = $db->query("SELECT * FROM terminals ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 $destinations = $db->query("SELECT * FROM destinations ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 $containers = $db->query("SELECT * FROM containers ORDER BY reference ASC")->fetchAll(PDO::FETCH_ASSOC);
 $vendors = $db->query("SELECT * FROM vendors ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
-// Capture filters from GET
-$f_get_in = $_GET['f_get_in'] ?? [];
-$f_get_out = $_GET['f_get_out'] ?? [];
-$f_dest = $_GET['f_dest'] ?? [];
-$f_container = $_GET['f_container'] ?? [];
-$f_vendor = $_GET['f_vendor'] ?? [];
+// Capture filters from GET (now using single strings for searchable inputs)
+$s_get_in = $_GET['s_get_in'] ?? '';
+$s_get_out = $_GET['s_get_out'] ?? '';
+$s_dest = $_GET['s_dest'] ?? '';
+$s_container = $_GET['s_container'] ?? '';
+$s_vendor = $_GET['s_vendor'] ?? '';
 
 // Build Dynamic Query
 $where_clauses = [];
 $params = [];
 
-if (!empty($f_get_in)) {
-    $placeholders = implode(',', array_fill(0, count($f_get_in), '?'));
-    $where_clauses[] = "i.get_in_id IN ($placeholders)";
-    $params = array_merge($params, $f_get_in);
+if (!empty($s_get_in)) {
+    $where_clauses[] = "t_in.name LIKE ?";
+    $params[] = "%$s_get_in%";
 }
-
-if (!empty($f_get_out)) {
-    $placeholders = implode(',', array_fill(0, count($f_get_out), '?'));
-    $where_clauses[] = "i.get_out_id IN ($placeholders)";
-    $params = array_merge($params, $f_get_out);
+if (!empty($s_get_out)) {
+    $where_clauses[] = "t_out.name LIKE ?";
+    $params[] = "%$s_get_out%";
 }
-
-if (!empty($f_dest)) {
-    $placeholders = implode(',', array_fill(0, count($f_dest), '?'));
-    $where_clauses[] = "i.destination_id IN ($placeholders)";
-    $params = array_merge($params, $f_dest);
+if (!empty($s_dest)) {
+    $where_clauses[] = "d.name LIKE ?";
+    $params[] = "%$s_dest%";
 }
-
-if (!empty($f_container)) {
-    $placeholders = implode(',', array_fill(0, count($f_container), '?'));
-    $where_clauses[] = "i.container_id IN ($placeholders)";
-    $params = array_merge($params, $f_container);
+if (!empty($s_container)) {
+    $where_clauses[] = "c.reference LIKE ?";
+    $params[] = "%$s_container%";
 }
-
-if (!empty($f_vendor)) {
-    $placeholders = implode(',', array_fill(0, count($f_vendor), '?'));
-    $where_clauses[] = "i.vendor_id IN ($placeholders)";
-    $params = array_merge($params, $f_vendor);
+if (!empty($s_vendor)) {
+    $where_clauses[] = "v.name LIKE ?";
+    $params[] = "%$s_vendor%";
 }
 
 $query = "SELECT i.*,
@@ -70,10 +61,6 @@ $query .= " ORDER BY i.id DESC";
 $stmt = $db->prepare($query);
 $stmt->execute($params);
 $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-function is_selected($val, $arr) {
-    return in_array($val, $arr) ? 'selected' : '';
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -95,7 +82,6 @@ function is_selected($val, $arr) {
             <header class="page-header">
                 <div class="page-title">
                     <h1>Item Master</h1>
-                    <p>Overview of all active shipment routes and pricing</p>
                 </div>
                 <div class="page-actions">
                     <a href="export.php?type=items" class="btn">Export CSV</a>
@@ -104,75 +90,52 @@ function is_selected($val, $arr) {
                 </div>
             </header>
 
-            <section class="filter-section">
+            <section class="filter-section compact-search-bar">
                 <form action="index.php" method="GET">
-                    <div class="filter-grid">
-                        <div class="filter-group">
-                            <label>Get In</label>
-                            <select name="f_get_in[]" multiple title="Hold Ctrl to select multiple">
-                                <?php foreach ($terminals as $t): ?>
-                                    <option value="<?php echo $t['id']; ?>" <?php echo is_selected($t['id'], $f_get_in); ?>>
-                                        <?php echo htmlspecialchars($t['name']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Get Out</label>
-                            <select name="f_get_out[]" multiple title="Hold Ctrl to select multiple">
-                                <?php foreach ($terminals as $t): ?>
-                                    <option value="<?php echo $t['id']; ?>" <?php echo is_selected($t['id'], $f_get_out); ?>>
-                                        <?php echo htmlspecialchars($t['name']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Destination</label>
-                            <select name="f_dest[]" multiple title="Hold Ctrl to select multiple">
-                                <?php foreach ($destinations as $d): ?>
-                                    <option value="<?php echo $d['id']; ?>" <?php echo is_selected($d['id'], $f_dest); ?>>
-                                        <?php echo htmlspecialchars($d['name']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Container</label>
-                            <select name="f_container[]" multiple title="Hold Ctrl to select multiple">
-                                <?php foreach ($containers as $c): ?>
-                                    <option value="<?php echo $c['id']; ?>" <?php echo is_selected($c['id'], $f_container); ?>>
-                                        <?php echo htmlspecialchars($c['reference']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label>Vendor</label>
-                            <select name="f_vendor[]" multiple title="Hold Ctrl to select multiple">
-                                <?php foreach ($vendors as $v): ?>
-                                    <option value="<?php echo $v['id']; ?>" <?php echo is_selected($v['id'], $f_vendor); ?>>
-                                        <?php echo htmlspecialchars($v['name']); ?>
-                                    </option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                    </div>
+                    <input type="text" name="s_get_in" list="l_get_in" placeholder="Search Get In..." value="<?php echo htmlspecialchars($s_get_in); ?>">
+                    <datalist id="l_get_in">
+                        <?php foreach ($terminals as $t): ?>
+                            <option value="<?php echo htmlspecialchars($t['name']); ?>">
+                        <?php endforeach; ?>
+                    </datalist>
+
+                    <input type="text" name="s_get_out" list="l_get_out" placeholder="Search Get Out..." value="<?php echo htmlspecialchars($s_get_out); ?>">
+                    <datalist id="l_get_out">
+                        <?php foreach ($terminals as $t): ?>
+                            <option value="<?php echo htmlspecialchars($t['name']); ?>">
+                        <?php endforeach; ?>
+                    </datalist>
+
+                    <input type="text" name="s_dest" list="l_dest" placeholder="Search Dest..." value="<?php echo htmlspecialchars($s_dest); ?>">
+                    <datalist id="l_dest">
+                        <?php foreach ($destinations as $d): ?>
+                            <option value="<?php echo htmlspecialchars($d['name']); ?>">
+                        <?php endforeach; ?>
+                    </datalist>
+
+                    <input type="text" name="s_container" list="l_container" placeholder="Search Container..." value="<?php echo htmlspecialchars($s_container); ?>">
+                    <datalist id="l_container">
+                        <?php foreach ($containers as $c): ?>
+                            <option value="<?php echo htmlspecialchars($c['reference']); ?>">
+                        <?php endforeach; ?>
+                    </datalist>
+
+                    <input type="text" name="s_vendor" list="l_vendor" placeholder="Search Vendor..." value="<?php echo htmlspecialchars($s_vendor); ?>">
+                    <datalist id="l_vendor">
+                        <?php foreach ($vendors as $v): ?>
+                            <option value="<?php echo htmlspecialchars($v['name']); ?>">
+                        <?php endforeach; ?>
+                    </datalist>
+
                     <div class="filter-actions">
-                        <a href="index.php" class="btn">Reset</a>
-                        <button type="submit" class="btn btn-primary">Filter</button>
+                        <button type="submit" class="btn btn-primary">🔍</button>
+                        <a href="index.php" class="btn">✖</a>
                     </div>
                 </form>
             </section>
 
             <?php if (isset($_GET['success'])): ?>
                 <div class="alert alert-success">Shipment record added successfully!</div>
-            <?php endif; ?>
-            <?php if (isset($_GET['updated'])): ?>
-                <div class="alert alert-success">Shipment record updated successfully!</div>
-            <?php endif; ?>
-            <?php if (isset($_GET['deleted'])): ?>
-                <div class="alert alert-danger">Record deleted successfully.</div>
             <?php endif; ?>
 
             <div class="card">
@@ -194,7 +157,7 @@ function is_selected($val, $arr) {
                         <tbody>
                             <?php if (empty($items)): ?>
                                 <tr>
-                                    <td colspan="8">No shipment records found matching the filters.</td>
+                                    <td colspan="8">No shipment records found matching the search criteria.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($items as $item): ?>
