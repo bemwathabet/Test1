@@ -11,11 +11,12 @@ $selected_gate_in = $_GET['gate_in_id'] ?? ($terminals[0]['id'] ?? 0);
 $vendors = $db->query("SELECT * FROM vendors ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 $selected_vendor = isset($_GET['vendor_id']) ? (int)$_GET['vendor_id'] : 0;
 
+// Fetch all unique destinations (Rows/Filter)
+$destinations = $db->query("SELECT * FROM destinations ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
+$selected_dest_filter = isset($_GET['destination_id']) ? (int)$_GET['destination_id'] : 0;
+
 // Fetch all unique containers (Columns)
 $containers = $db->query("SELECT * FROM containers ORDER BY reference ASC")->fetchAll(PDO::FETCH_ASSOC);
-
-// Fetch all unique destinations (Rows)
-$destinations = $db->query("SELECT * FROM destinations ORDER BY name ASC")->fetchAll(PDO::FETCH_ASSOC);
 
 // Fetch pricing matrix for selected Gate In
 $matrix_data = [];
@@ -33,6 +34,11 @@ if ($selected_gate_in > 0) {
     if ($selected_vendor > 0) {
         $sql .= " AND i.vendor_id = ?";
         $params[] = $selected_vendor;
+    }
+
+    if ($selected_dest_filter > 0) {
+        $sql .= " AND i.destination_id = ?";
+        $params[] = $selected_dest_filter;
     }
 
     $stmt = $db->prepare($sql);
@@ -84,7 +90,7 @@ if ($selected_gate_in > 0) {
             box-shadow: var(--shadow);
         }
         .report-filter select {
-            width: 300px;
+            width: 240px;
         }
         .pivot-table-card {
             overflow-x: auto;
@@ -114,6 +120,18 @@ if ($selected_gate_in > 0) {
             color: #cbd5e1;
             font-size: 12px;
         }
+
+        /* Required Special Header Style */
+        .pivot-table thead th {
+            background-color: var(--primary-color) !important;
+            color: #ffffff !important;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 11px;
+            letter-spacing: 0.05em;
+        }
     </style>
 </head>
 <body>
@@ -133,7 +151,7 @@ if ($selected_gate_in > 0) {
                 <form action="report.php" method="GET" style="display: flex; align-items: center; gap: 24px; width: 100%;">
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <label for="gate_in_id" style="margin: 0; font-weight: 600;">Select Gate In:</label>
-                        <select name="gate_in_id" id="gate_in_id" onchange="this.form.submit()" style="width: 240px;">
+                        <select name="gate_in_id" id="gate_in_id" onchange="this.form.submit()">
                             <?php foreach ($terminals as $t): ?>
                                 <option value="<?php echo $t['id']; ?>" <?php echo $t['id'] == $selected_gate_in ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($t['name']); ?>
@@ -144,11 +162,23 @@ if ($selected_gate_in > 0) {
 
                     <div style="display: flex; align-items: center; gap: 8px;">
                         <label for="vendor_id" style="margin: 0; font-weight: 600;">Vendor:</label>
-                        <select name="vendor_id" id="vendor_id" onchange="this.form.submit()" style="width: 240px;">
+                        <select name="vendor_id" id="vendor_id" onchange="this.form.submit()">
                             <option value="0" <?php echo $selected_vendor == 0 ? 'selected' : ''; ?>>All Vendors</option>
                             <?php foreach ($vendors as $v): ?>
                                 <option value="<?php echo $v['id']; ?>" <?php echo $v['id'] == $selected_vendor ? 'selected' : ''; ?>>
                                     <?php echo htmlspecialchars($v['name']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label for="destination_id" style="margin: 0; font-weight: 600;">Destination:</label>
+                        <select name="destination_id" id="destination_id" onchange="this.form.submit()">
+                            <option value="0" <?php echo $selected_dest_filter == 0 ? 'selected' : ''; ?>>All Destinations</option>
+                            <?php foreach ($destinations as $d): ?>
+                                <option value="<?php echo $d['id']; ?>" <?php echo $d['id'] == $selected_dest_filter ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($d['name']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
