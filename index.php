@@ -84,7 +84,17 @@ $items = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <h1>Item Master</h1>
                 </div>
                 <div class="page-actions">
-                    <a href="export.php?type=items" class="btn">Export CSV</a>
+                    <?php
+                    $export_query = http_build_query([
+                        'type' => 'items',
+                        's_get_in' => $s_get_in,
+                        's_get_out' => $s_get_out,
+                        's_dest' => $s_dest,
+                        's_container' => $s_container,
+                        's_vendor' => $s_vendor
+                    ]);
+                    ?>
+                    <a href="export.php?<?php echo $export_query; ?>" class="btn">Export CSV</a>
                     <a href="import.php?type=items" class="btn">Import CSV</a>
                     <a href="add.php" class="btn btn-primary">Add New Item</a>
                 </div>

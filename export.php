@@ -30,6 +30,37 @@ switch ($type) {
     case 'items':
     default:
         fputcsv($output, ['ID', 'Get In', 'Get Out', 'Destination', 'Container', 'Vendor', 'Price', 'Currency']);
+
+        $s_get_in = $_GET['s_get_in'] ?? '';
+        $s_get_out = $_GET['s_get_out'] ?? '';
+        $s_dest = $_GET['s_dest'] ?? '';
+        $s_container = $_GET['s_container'] ?? '';
+        $s_vendor = $_GET['s_vendor'] ?? '';
+
+        $where_clauses = [];
+        $params = [];
+
+        if (!empty($s_get_in)) {
+            $where_clauses[] = "tin.name LIKE ?";
+            $params[] = "%$s_get_in%";
+        }
+        if (!empty($s_get_out)) {
+            $where_clauses[] = "tout.name LIKE ?";
+            $params[] = "%$s_get_out%";
+        }
+        if (!empty($s_dest)) {
+            $where_clauses[] = "d.name LIKE ?";
+            $params[] = "%$s_dest%";
+        }
+        if (!empty($s_container)) {
+            $where_clauses[] = "c.reference LIKE ?";
+            $params[] = "%$s_container%";
+        }
+        if (!empty($s_vendor)) {
+            $where_clauses[] = "v.name LIKE ?";
+            $params[] = "%$s_vendor%";
+        }
+
         $query = "SELECT
                     i.id,
                     tin.name as get_in,
@@ -44,9 +75,17 @@ switch ($type) {
                   JOIN terminals tout ON i.get_out_id = tout.id
                   JOIN destinations d ON i.destination_id = d.id
                   JOIN containers c ON i.container_id = c.id
-                  JOIN vendors v ON i.vendor_id = v.id
-                  ORDER BY i.id DESC";
-        $rows = $db->query($query)->fetchAll(PDO::FETCH_ASSOC);
+                  JOIN vendors v ON i.vendor_id = v.id";
+
+        if (!empty($where_clauses)) {
+            $query .= " WHERE " . implode(" AND ", $where_clauses);
+        }
+
+        $query .= " ORDER BY i.id DESC";
+
+        $stmt = $db->prepare($query);
+        $stmt->execute($params);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         break;
 }
 
